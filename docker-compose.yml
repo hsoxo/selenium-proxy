@@ -1,0 +1,6 @@
+services:
+  fastapi-selenium:
+    build: .
+    ports:
+      - "8000:8000"
+    shm_size: "2gb" # 防止 Chrome 崩溃
