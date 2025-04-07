@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Response, Query
 from pydantic import BaseModel, HttpUrl
 import undetected_chromedriver as uc
 import time
@@ -11,9 +11,9 @@ class URLRequest(BaseModel):
 
 
 @app.post("/fetch-html", response_class=Response)
-def fetch_html(request: URLRequest):
+def fetch_html(url: str = Query(..., description="URL to fetch")):
+    print(url)
     try:
-        print(request.url)
         options = uc.ChromeOptions()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -21,10 +21,9 @@ def fetch_html(request: URLRequest):
         options.add_argument("--disable-dev-shm-usage")
 
         driver = uc.Chrome(options=options)
-        driver.get(str(request.url))
+        driver.get(url)
         time.sleep(3)
         html = driver.page_source
-        print(html)
         driver.quit()
 
         return Response(content=html, media_type="text/html")
